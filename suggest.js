@@ -2,12 +2,12 @@
 var Suggest = function(url, elem) {
     this.url = url;
     this.elem = elem;
-    
-    // TODO -- add correct event listener
-    this.elem.click(function(){
+    that = this;
+
+    // Event listener for keypress in input field
+    this.elem.keyup(function(e){
         var value = $(this).val();
-        // how to call parent class
-        //.search(value);
+        that.search(value);
     });
 
     this.init();

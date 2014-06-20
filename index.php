@@ -32,7 +32,7 @@
     </html>
 
 <?php } else { 
-    echo json_encode('{name: "blah"}');
+    echo '{"name": "blah"}';
 } ?>
 
 
