@@ -3,11 +3,17 @@ var Suggest = function(url, elem) {
     this.url = url;
     this.elem = elem;
     that = this;
+    this.suggestions = null;
 
     // Event listener for keypress in input field
     this.elem.keyup(function(e){
         var value = $(this).val();
-        that.search(value);
+        if(value !== "") {
+            that.search(value);
+            that.showBox();
+        } else {
+            that.hideBox();
+        }
     });
 
     this.init();
@@ -26,20 +32,22 @@ Suggest.prototype = {
         if(typeof $(".suggestions").html() === 'undefined') {
             $("body").append("<div class='suggestions'></div>");
         }
-        suggestions = $(".suggestions");
+        this.suggestions = $(".suggestions");
 
-        this.style(suggestions);
+        this.style(this.suggestions);
     },
 
     //will add styles to the html created by this.draw()
     style : function(target) {
         target.css("position", "absolute");
-        target.css("width", this.elem.outerWidth()*1.05);
+        target.hide();
+        target.css("width", this.elem.outerWidth());
         target.css("min-height", "100px");
-        target.css("background-color", "rgba(211, 208, 208, 0.88)");
+        target.css("max-height", window.innerHeight * 0.5);
+        target.css("background-color", "gba(255, 255, 255, 0.88)");
+        target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
-        target.css("overflow-y", "scroll");
-        target.css("overflow-x", "hidden");
+        target.css("overflow", "hidden");
 
         //position straight below the form
         target.css("top", this.elem.offset().bottom);
@@ -50,10 +58,17 @@ Suggest.prototype = {
     search : function(value) {
         console.log("searching for: " + value);
 
-        var jqjson = $.getJSON("/suggest/?query=" + value, function(data){
+        var jqjson = $.getJSON(this.url + "?query=" + value, function(data){
             console.log(data);
-            console.log(data.name);
         });
+    },
+
+    showBox : function() {
+        this.suggestions.show();
+    },
+
+    hideBox : function() {
+        this.suggestions.hide();
     }
 };
 
@@ -68,6 +83,6 @@ if((typeof $) !== 'function') {
     $.fn.suggest = function(options, args) {
         // console.log(this.first()[0]);
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
-        s.search("catalin");
+        // s.search("catalin");
     }
 }

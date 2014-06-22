@@ -32,7 +32,13 @@
     </html>
 
 <?php } else { 
-    echo '{"name": "blah"}';
+    $data = array("title" => 'Lorem ipsum', "text" => "some longer blah blah", "url" => "some url");
+    $result = array('title' => "name", 'data' => $data);
+    
+    $json = array();
+    array_push($json, $result);
+    // echo '{"name": "blah"}';
+    echo json_encode($result, JSON_PRETTY_PRINT);
 } ?>
 
 
