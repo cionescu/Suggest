@@ -1,8 +1,8 @@
-
 var Suggest = function(url, elem) {
     this.url = url;
     this.elem = elem;
     that = this;
+    this.data = null;
     this.suggestions = null;
 
     // Event listener for keypress in input field
@@ -56,10 +56,14 @@ Suggest.prototype = {
     },
 
     search : function(value) {
-        console.log("searching for: " + value);
-
+        this.data = null;
+        that = this;
         var jqjson = $.getJSON(this.url + "?query=" + value, function(data){
             console.log(data);
+            that.data = data;
+        });
+        jqjson.complete(function(){
+            that.renderSuggestions()
         });
     },
 
@@ -69,6 +73,25 @@ Suggest.prototype = {
 
     hideBox : function() {
         this.suggestions.hide();
+    },
+
+    // will render html for the suggestions' div
+    renderSuggestions : function() {
+        x = this.suggestions;
+        x.html("");
+        for(var i = 0; i < this.data.length; i++) {
+            // render the category
+            x.append("<h4>"+this.data[i].title+"</h4>");
+            // render the contents of the category
+            this.renderSuggestionsContent(this.data[i].data);
+        }
+    },
+
+    // will render contents coming from json for one category
+    renderSuggestionsContent: function(data) {
+        for(var i=0; i< data.length; i++) {
+            // claudiu !!    
+        }
     }
 };
 
@@ -77,12 +100,13 @@ Suggest.prototype = {
 if((typeof $) !== 'function') {
     throw "You need to include JQuery before this library";
 } else {
-    // if they are - Create chainable jQuery plugin:
+    
+    // if pre-requisites are met -> Create chainable jQuery plug-in:
     console.log("pre-requisites are okay!");
 
     $.fn.suggest = function(options, args) {
         // console.log(this.first()[0]);
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
-        // s.search("catalin");
+        s.search("catalin");
     }
 }

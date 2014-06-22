@@ -9,7 +9,7 @@ def index():
         return render_template('index.html')
     else:
         res = []
-        for i in xrange(0, 2):
+        for i in xrange(1, (len(request.args.get('query'))+1) ):
             data = []
             for j in xrange(0, 1):
                 data.append({'name' : str(i) + " " + str(j), 'url' : "blah"})
