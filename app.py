@@ -12,7 +12,7 @@ def index():
         for i in xrange(1, (len(request.args.get('query'))+1) ):
             data = []
             for j in xrange(0, 1):
-                data.append({'name' : str(i) + " " + str(j), 'url' : "blah"})
+                data.append({'name' : str(i) + " " + str(j), 'url' : "http://icons.iconarchive.com/icons/yellowicon/game-stars/256/Mario-icon.png"})
             res.append({"title": "section "+str(i), "data": data})
         return json.dumps(res, indent=2)
 

@@ -131,7 +131,12 @@ Suggest.prototype = {
         x = this.suggestions;
         x.append("<div class='category' id='"+count+"'>");
         for(var i=0; i< data.length; i++) {
-            x.append("<h5 class='suggestion' id='"+i+"'>"+data[i].name+"</h5>");
+            aux = ("<h5 class='suggestion' id='"+i+"'>");
+            aux += ("<img src='"+data[i].url+"' style='height:50px; width:50px;'></img>");
+            aux += (data[i].name);
+            aux += ("</h5>");
+
+            x.append(aux);
         }
         x.append("</div>");
     }
