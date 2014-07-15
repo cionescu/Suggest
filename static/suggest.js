@@ -77,7 +77,8 @@ Suggest.prototype = {
     // will create a hover effect for the .suggestion h5's
     hoverStyle : function() {
         s = $("h5.suggestion");
-        s.css("padding","1%");
+        s.css("border-radius","3px");
+        s.css("padding","2%");
         s.hover(function(){
             $(this).css("background-color","lightgrey");
             $(this).css("cursor", "pointer");
