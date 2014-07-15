@@ -15,12 +15,18 @@ var Suggest = function(url, elem) {
             that.hideBox();
         }
     });
+    
+    //closing the suggestion box if escape is pressed
     that = this;
     $(document).keyup(function(e) {
       if (e.keyCode == 27) { // escape 
         that.hideBox();
       }
     });
+
+    window.onresize = function() {
+        that.setPosition($(".suggestions"));
+    }
 
     this.init();
 }
@@ -46,9 +52,7 @@ Suggest.prototype = {
     style : function(target) {
         target.css("position", "absolute");
         target.hide();
-        target.css("width", this.elem.outerWidth());
         target.css("min-height", "100px");
-        target.css("max-height", window.innerHeight * 0.5);
         target.css("background-color", "gba(255, 255, 255, 0.88)");
         target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
@@ -56,10 +60,18 @@ Suggest.prototype = {
         target.css("padding","1%");
         this.elem.attr("autocomplete","off");
 
+        this.setPosition(target);
+    },
+
+    setPosition : function(target) {
         //position straight below the form
         target.css("top", this.elem.offset().bottom);
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
+        
+        target.css("max-height", window.innerHeight * 0.5);
+        target.css("width", this.elem.outerWidth());
+
     },
 
     // will create a hover effect for the .suggestion h5's
@@ -136,6 +148,5 @@ if( (typeof $) !== 'function') {
     $.fn.suggest = function(options, args) {
         // console.log(this.first()[0]);
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
-        s.search("catalin");
     }
 }
