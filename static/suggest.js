@@ -15,6 +15,12 @@ var Suggest = function(url, elem) {
             that.hideBox();
         }
     });
+    that = this;
+    $(document).keyup(function(e) {
+      if (e.keyCode == 27) { // escape 
+        that.hideBox();
+      }
+    });
 
     this.init();
 }
@@ -22,7 +28,6 @@ var Suggest = function(url, elem) {
 Suggest.prototype = {
 
     init : function() {
-        console.log("init");
         this.draw();
     },
 
@@ -48,6 +53,8 @@ Suggest.prototype = {
         target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
         target.css("overflow", "hidden");
+        target.css("padding","1%");
+        this.elem.attr("autocomplete","off");
 
         //position straight below the form
         target.css("top", this.elem.offset().bottom);
@@ -55,11 +62,29 @@ Suggest.prototype = {
         target.css("right", this.elem.offset().right);
     },
 
+    // will create a hover effect for the .suggestion h5's
+    hoverStyle : function() {
+        s = $("h5.suggestion");
+        s.css("padding","1%");
+        s.hover(function(){
+            $(this).css("background-color","lightgrey");
+            $(this).css("cursor", "pointer");
+        }, function(){
+            $(this).css("background-color","white");
+            $(this).css("cursor", "auto");
+        });
+        that = this;
+        s.click(function(){
+            suggestion = $(this).html();
+            that.elem.val(suggestion);
+        });
+    },
+
+    // performs the api GET request to get the suggestions
     search : function(value) {
         this.data = null;
         that = this;
         var jqjson = $.getJSON(this.url + "?query=" + value, function(data){
-            console.log(data);
             that.data = data;
         });
         jqjson.complete(function(){
@@ -83,21 +108,25 @@ Suggest.prototype = {
             // render the category
             x.append("<h4>"+this.data[i].title+"</h4>");
             // render the contents of the category
-            this.renderSuggestionsContent(this.data[i].data);
+            this.renderSuggestionsContent(this.data[i].data, i);
         }
+        this.hoverStyle();
     },
 
     // will render contents coming from json for one category
-    renderSuggestionsContent: function(data) {
+    renderSuggestionsContent: function(data, count) {
+        x = this.suggestions;
+        x.append("<div class='category' id='"+count+"'>");
         for(var i=0; i< data.length; i++) {
-            // claudiu !!    
+            x.append("<h5 class='suggestion' id='"+i+"'>"+data[i].name+"</h5>");
         }
+        x.append("</div>");
     }
 };
 
 // Check if pre-requisites are met
 
-if((typeof $) !== 'function') {
+if( (typeof $) !== 'function') {
     throw "You need to include JQuery before this library";
 } else {
     
