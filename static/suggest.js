@@ -76,7 +76,7 @@ Suggest.prototype = {
 
     // will create a hover effect for the .suggestion h5's
     hoverStyle : function() {
-        s = $("h5.suggestion");
+        s = $(".suggestion");
         s.css("border-radius","3px");
         s.css("padding","2%");
         s.hover(function(){
@@ -129,12 +129,15 @@ Suggest.prototype = {
     // will render contents coming from json for one category
     renderSuggestionsContent: function(data, count) {
         x = this.suggestions;
-        x.append("<div class='category' id='"+count+"'>");
+        x.append("<div class='category container-fluid' id='"+count+"'>");
         for(var i=0; i< data.length; i++) {
-            aux = ("<h5 class='suggestion' id='"+i+"'>");
-            aux += ("<img src='"+data[i].url+"' style='height:50px; width:50px;'></img>");
-            aux += (data[i].name);
-            aux += ("</h5>");
+            aux = ("<div class='suggestion row' id='"+i+"'>");
+                aux += ("<div class='col-md-4'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
+                aux += "<div class='col-md-8'>";
+                    aux += "<div class='row'><h5>"+(data[i].name)+"</h5></div>";
+                    aux += "<div class='row' style='color:grey;'>Blah</div>";
+                aux += "</div>";
+            aux += ("</div>");
 
             x.append(aux);
         }
@@ -152,7 +155,6 @@ if( (typeof $) !== 'function') {
     console.log("pre-requisites are okay!");
 
     $.fn.suggest = function(options, args) {
-        // console.log(this.first()[0]);
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
     }
 }
