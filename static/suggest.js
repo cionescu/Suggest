@@ -52,7 +52,7 @@ Suggest.prototype = {
     style : function(target) {
         target.css("position", "absolute");
         target.hide();
-        target.css("min-height", "100px");
+        target.css("min-height", "50px");
         target.css("background-color", "gba(255, 255, 255, 0.88)");
         target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
@@ -101,7 +101,13 @@ Suggest.prototype = {
             that.data = data;
         });
         jqjson.complete(function(){
-            that.renderSuggestions()
+            console.log(that.data)
+            if ( (typeof that.data != "undefined") && (that.data.length > 0) ) {
+                that.renderSuggestions()
+            } else {
+                x = that.suggestions;
+                x.html("<h4>No results matching the search..</h4>");
+            }
         });
     },
 
