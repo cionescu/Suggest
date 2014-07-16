@@ -69,7 +69,7 @@ Suggest.prototype = {
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
         
-        target.css("max-height", window.innerHeight * 0.5);
+        target.css("max-height", window.innerHeight * 0.7);
         target.css("width", this.elem.outerWidth());
 
     },
@@ -88,7 +88,7 @@ Suggest.prototype = {
         });
         that = this;
         s.click(function(){
-            suggestion = $(this).html();
+            suggestion = $(this).find("h5").html();
             that.elem.val(suggestion);
         });
     },
