@@ -5,6 +5,8 @@ var Suggest = function(url, elem) {
     this.data = null;
     this.suggestions = null;
 
+    this.searchValue = null;
+
     // Event listener for keypress in input field
     this.elem.keyup(function(e){
         var value = $(this).val();
@@ -96,6 +98,7 @@ Suggest.prototype = {
     // performs the api GET request to get the suggestions
     search : function(value) {
         this.data = null;
+        this.searchValue = value;
         that = this;
         var jqjson = $.getJSON(this.url + "?query=" + value, function(data){
             that.data = data;
@@ -132,15 +135,25 @@ Suggest.prototype = {
         this.hoverStyle();
     },
 
+    // wrap matched substring in string with bold tags
+    emphasise: function(string) {
+        s = this.searchValue;
+        s2 = s;
+        s2 = s2[0].toUpperCase() + s2.substring(1,s2.length)
+        ret = string.replace(s,"<b>"+s+"</b>");
+        ret = ret.replace(s2, "<b>"+s2+"</b>");
+        return ret;
+    },
+
     // will render contents coming from json for one category
     renderSuggestionsContent: function(data, count) {
         x = this.suggestions;
         x.append("<div class='category container-fluid' id='"+count+"'>");
         for(var i=0; i< data.length; i++) {
             aux = ("<div class='suggestion row' id='"+i+"'>");
-                aux += ("<div class='col-md-4'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
-                aux += "<div class='col-md-8'>";
-                    aux += "<div class='row'><h5>"+(data[i].name)+"</h5></div>";
+                aux += ("<div class='col-md-4 col-xs-2'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
+                aux += "<div class='col-md-8 col-xs-10'>";
+                    aux += "<div class='row'><h5>"+this.emphasise(data[i].name)+"</h5></div>";
                     aux += "<div class='row' style='color:grey;'>Blah</div>";
                 aux += "</div>";
             aux += ("</div>");
