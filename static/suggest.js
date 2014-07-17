@@ -5,6 +5,8 @@ var Suggest = function(url, elem) {
     this.data = null;
     this.suggestions = null;
 
+    this.searchValue = null;
+
     // Event listener for keypress in input field
     this.elem.keyup(function(e){
         var value = $(this).val();
@@ -15,12 +17,18 @@ var Suggest = function(url, elem) {
             that.hideBox();
         }
     });
+    
+    //closing the suggestion box if escape is pressed
     that = this;
     $(document).keyup(function(e) {
       if (e.keyCode == 27) { // escape 
         that.hideBox();
       }
     });
+
+    window.onresize = function() {
+        that.setPosition($(".suggestions"));
+    }
 
     this.init();
 }
@@ -46,9 +54,7 @@ Suggest.prototype = {
     style : function(target) {
         target.css("position", "absolute");
         target.hide();
-        target.css("width", this.elem.outerWidth());
-        target.css("min-height", "100px");
-        target.css("max-height", window.innerHeight * 0.5);
+        target.css("min-height", "50px");
         target.css("background-color", "gba(255, 255, 255, 0.88)");
         target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
@@ -56,16 +62,25 @@ Suggest.prototype = {
         target.css("padding","1%");
         this.elem.attr("autocomplete","off");
 
+        this.setPosition(target);
+    },
+
+    setPosition : function(target) {
         //position straight below the form
         target.css("top", this.elem.offset().bottom);
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
+        
+        target.css("max-height", window.innerHeight * 0.7);
+        target.css("width", this.elem.outerWidth());
+
     },
 
     // will create a hover effect for the .suggestion h5's
     hoverStyle : function() {
-        s = $("h5.suggestion");
-        s.css("padding","1%");
+        s = $(".suggestion");
+        s.css("border-radius","3px");
+        s.css("padding","2%");
         s.hover(function(){
             $(this).css("background-color","lightgrey");
             $(this).css("cursor", "pointer");
@@ -75,7 +90,7 @@ Suggest.prototype = {
         });
         that = this;
         s.click(function(){
-            suggestion = $(this).html();
+            suggestion = $(this).find("h5").html();
             that.elem.val(suggestion);
         });
     },
@@ -83,12 +98,19 @@ Suggest.prototype = {
     // performs the api GET request to get the suggestions
     search : function(value) {
         this.data = null;
+        this.searchValue = value;
         that = this;
         var jqjson = $.getJSON(this.url + "?query=" + value, function(data){
             that.data = data;
         });
         jqjson.complete(function(){
-            that.renderSuggestions()
+            console.log(that.data)
+            if ( (typeof that.data != "undefined") && (that.data.length > 0) ) {
+                that.renderSuggestions()
+            } else {
+                x = that.suggestions;
+                x.html("<h4>No results matching the search..</h4>");
+            }
         });
     },
 
@@ -113,12 +135,30 @@ Suggest.prototype = {
         this.hoverStyle();
     },
 
+    // wrap matched substring in string with bold tags
+    emphasise: function(string) {
+        s = this.searchValue;
+        s2 = s;
+        s2 = s2[0].toUpperCase() + s2.substring(1,s2.length)
+        ret = string.replace(s,"<b>"+s+"</b>");
+        ret = ret.replace(s2, "<b>"+s2+"</b>");
+        return ret;
+    },
+
     // will render contents coming from json for one category
     renderSuggestionsContent: function(data, count) {
         x = this.suggestions;
-        x.append("<div class='category' id='"+count+"'>");
+        x.append("<div class='category container-fluid' id='"+count+"'>");
         for(var i=0; i< data.length; i++) {
-            x.append("<h5 class='suggestion' id='"+i+"'>"+data[i].name+"</h5>");
+            aux = ("<div class='suggestion row' id='"+i+"'>");
+                aux += ("<div class='col-md-4 col-xs-2'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
+                aux += "<div class='col-md-8 col-xs-10'>";
+                    aux += "<div class='row'><h5>"+this.emphasise(data[i].name)+"</h5></div>";
+                    aux += "<div class='row' style='color:grey;'>Blah</div>";
+                aux += "</div>";
+            aux += ("</div>");
+
+            x.append(aux);
         }
         x.append("</div>");
     }
@@ -134,8 +174,6 @@ if( (typeof $) !== 'function') {
     console.log("pre-requisites are okay!");
 
     $.fn.suggest = function(options, args) {
-        // console.log(this.first()[0]);
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
-        s.search("catalin");
     }
 }
