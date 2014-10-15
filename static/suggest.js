@@ -67,7 +67,8 @@ Suggest.prototype = {
 
     setPosition : function(target) {
         //position straight below the form
-        target.css("top", this.elem.offset().bottom);
+        target.css("top", this.elem.offset().top + this.elem.outerHeight());
+        console.log(this.elem);
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
         
