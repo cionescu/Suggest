@@ -69,7 +69,7 @@ Suggest.prototype = {
     setPosition : function(target) {
         //position straight below the form
         target.css("top", this.elem.offset().top + this.elem.outerHeight());
-        console.log(this.elem);
+        // console.log(this.elem);
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
         
@@ -92,7 +92,8 @@ Suggest.prototype = {
         });
         that = this;
         s.click(function(){
-            suggestion = $(this).find("h5").html();
+            suggestion = $(this).find("h5").text();
+            // console.log(typeof suggestion);
             that.elem.val(suggestion);
         });
     },
@@ -106,7 +107,7 @@ Suggest.prototype = {
             that.data = data;
         });
         jqjson.complete(function(){
-            console.log(that.data)
+            // console.log(that.data)
             if ( (typeof that.data != "undefined") && (that.data.length > 0) ) {
                 that.renderSuggestions()
             } else {
@@ -173,7 +174,7 @@ if( (typeof $) !== 'function') {
 } else {
     
     // if pre-requisites are met -> Create chainable jQuery plug-in:
-    console.log("pre-requisites are okay!");
+    // console.log("pre-requisites are okay!");
 
     $.fn.suggest = function(options, args) {
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
