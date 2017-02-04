@@ -143,8 +143,8 @@ Suggest.prototype = {
         s = this.searchValue;
         s2 = s;
         s2 = s2[0].toUpperCase() + s2.substring(1,s2.length)
-        ret = string.replace(s,"<b>"+s+"</b>");
-        ret = ret.replace(s2, "<b>"+s2+"</b>");
+        ret = string.replace(s,"<b style='color:grey;'>"+s+"</b>");
+        ret = ret.replace(s2, "<b style='color:grey;'>"+s2+"</b>");
         return ret;
     },
 
@@ -152,7 +152,7 @@ Suggest.prototype = {
     renderSuggestionsContent: function(data, count) {
         x = this.suggestions;
         x.append("<div class='category container-fluid' id='"+count+"'>");
-        for(var i=0; i< data.length; i++) {
+        for(var i=0; i < data.length; i++) {
             aux = ("<div class='suggestion row' id='"+i+"'>");
                 aux += ("<div class='col-md-3 col-xs-3'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
                 aux += "<div class='col-md-9 col-xs-9'>";
