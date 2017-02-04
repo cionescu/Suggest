@@ -55,11 +55,12 @@ Suggest.prototype = {
         target.css("position", "absolute");
         target.hide();
         target.css("min-height", "50px");
-        target.css("background-color", "gba(255, 255, 255, 0.88)");
+        target.css("background-color", "rgba(255, 255, 255, 1)");
         target.css("box-shadow", "0px 0px 8px rgba(0,0,0,0.3)");
         target.css("margin-top", "3px");
         target.css("overflow", "hidden");
         target.css("padding","1%");
+        target.css("z-index", "9999");
         this.elem.attr("autocomplete","off");
 
         this.setPosition(target);
@@ -67,11 +68,12 @@ Suggest.prototype = {
 
     setPosition : function(target) {
         //position straight below the form
-        target.css("top", this.elem.offset().bottom);
+        target.css("top", this.elem.offset().top + this.elem.outerHeight());
+        // console.log(this.elem);
         target.css("left", this.elem.offset().left);
         target.css("right", this.elem.offset().right);
         
-        target.css("max-height", window.innerHeight * 0.7);
+        target.css("max-height", window.innerHeight * 0.5);
         target.css("width", this.elem.outerWidth());
 
     },
@@ -90,7 +92,8 @@ Suggest.prototype = {
         });
         that = this;
         s.click(function(){
-            suggestion = $(this).find("h5").html();
+            suggestion = $(this).find("h5").text();
+            // console.log(typeof suggestion);
             that.elem.val(suggestion);
         });
     },
@@ -104,7 +107,7 @@ Suggest.prototype = {
             that.data = data;
         });
         jqjson.complete(function(){
-            console.log(that.data)
+            // console.log(that.data)
             if ( (typeof that.data != "undefined") && (that.data.length > 0) ) {
                 that.renderSuggestions()
             } else {
@@ -128,7 +131,7 @@ Suggest.prototype = {
         x.html("");
         for(var i = 0; i < this.data.length; i++) {
             // render the category
-            x.append("<h4>"+this.data[i].title+"</h4>");
+            x.append("<h4 style='padding:0;margin:0;'>"+this.data[i].title+"</h4>");
             // render the contents of the category
             this.renderSuggestionsContent(this.data[i].data, i);
         }
@@ -140,8 +143,8 @@ Suggest.prototype = {
         s = this.searchValue;
         s2 = s;
         s2 = s2[0].toUpperCase() + s2.substring(1,s2.length)
-        ret = string.replace(s,"<b>"+s+"</b>");
-        ret = ret.replace(s2, "<b>"+s2+"</b>");
+        ret = string.replace(s,"<b style='color:grey;'>"+s+"</b>");
+        ret = ret.replace(s2, "<b style='color:grey;'>"+s2+"</b>");
         return ret;
     },
 
@@ -149,12 +152,12 @@ Suggest.prototype = {
     renderSuggestionsContent: function(data, count) {
         x = this.suggestions;
         x.append("<div class='category container-fluid' id='"+count+"'>");
-        for(var i=0; i< data.length; i++) {
+        for(var i=0; i < data.length; i++) {
             aux = ("<div class='suggestion row' id='"+i+"'>");
-                aux += ("<div class='col-md-4 col-xs-2'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
-                aux += "<div class='col-md-8 col-xs-10'>";
-                    aux += "<div class='row'><h5>"+this.emphasise(data[i].name)+"</h5></div>";
-                    aux += "<div class='row' style='color:grey;'>Blah</div>";
+                aux += ("<div class='col-md-3 col-xs-3'><img src='"+data[i].url+"' style='height:50px; width:50px;'></img></div>");
+                aux += "<div class='col-md-9 col-xs-9'>";
+                    aux += "<div class='row'><h5 style='padding:0;margin:0;'>"+this.emphasise(data[i].name)+"</h5></div>";
+                    aux += "<div class='row' style='color:grey;'>"+data[i].description+"</div>";
                 aux += "</div>";
             aux += ("</div>");
 
@@ -171,7 +174,7 @@ if( (typeof $) !== 'function') {
 } else {
     
     // if pre-requisites are met -> Create chainable jQuery plug-in:
-    console.log("pre-requisites are okay!");
+    // console.log("pre-requisites are okay!");
 
     $.fn.suggest = function(options, args) {
         var s = new Suggest(options.url, $("#"+this.first()[0].id));
